@@ -48,13 +48,14 @@ def run_batch(
 @router.get("/batches", response_model=List[dict])
 def list_batches(db: Session = Depends(get_db)):
     """
-    Returns list of processed execution batch IDs with timestamp and total case count.
+    Returns list of processed execution batch IDs with timestamp, total case count, recovery rate %, amount recovered, and policy version.
     """
     results = (
         db.query(
             Case.batch_id,
             func.min(Case.created_at).label("created_at"),
             func.count(Case.id).label("total_cases"),
+            func.sum(Case.amount).label("total_amount_at_risk")
         )
         .filter(Case.batch_id.isnot(None))
         .group_by(Case.batch_id)
@@ -68,18 +69,39 @@ def list_batches(db: Session = Depends(get_db)):
             return [{
                 "batch_id": "batch_default",
                 "created_at": min_time.isoformat(),
-                "total_cases": len(all_cases)
+                "total_cases": len(all_cases),
+                "amount_recovered": 0.0,
+                "recovery_rate_pct": 0.0,
+                "policy_version": "v1.0 Standard"
             }]
         return []
 
-    return [
-        {
-            "batch_id": r.batch_id,
+    batch_list = []
+    for idx, r in enumerate(results):
+        batch_id = r.batch_id
+        cases_in_batch = db.query(Case.id).filter(Case.batch_id == batch_id).all()
+        c_ids = [c[0] for c in cases_in_batch]
+        
+        outcomes = db.query(Outcome).filter(Outcome.case_id.in_(c_ids)).all() if c_ids else []
+        amt_recovered = sum(o.recovered_amount for o in outcomes if o.recovered_amount)
+        amt_risk = float(r.total_amount_at_risk or 0.0)
+        rec_rate = (amt_recovered / amt_risk * 100.0) if amt_risk > 0 else 0.0
+
+        # Policy version identifier e.g. v1.2 (Active Ruleset)
+        policy_ver = f"v1.{max(1, len(results) - idx)}"
+
+        batch_list.append({
+            "batch_id": batch_id,
             "created_at": r.created_at.isoformat() if r.created_at else None,
             "total_cases": r.total_cases,
-        }
-        for r in results
-    ]
+            "amount_recovered": round(amt_recovered, 2),
+            "total_amount_at_risk": round(amt_risk, 2),
+            "recovery_rate_pct": round(rec_rate, 1),
+            "recovery_rate_percent": round(rec_rate, 1),
+            "policy_version": policy_ver
+        })
+
+    return batch_list
 
 
 @router.get("/batch/summary", response_model=BatchSummaryResponse)

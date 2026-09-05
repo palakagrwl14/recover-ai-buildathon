@@ -54,25 +54,26 @@ export function CaseDetail({
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="w-full sm:max-w-xl overflow-y-auto p-6 bg-slate-50/50">
-        <SheetHeader className="pb-4 border-b border-slate-200/80">
+      {/* Solid Opaque Background (bg-white shadow-2xl), Quicksand Font */}
+      <SheetContent side="right" className="w-full sm:max-w-xl overflow-y-auto p-6 md:p-8 bg-white border-l border-slate-200 shadow-2xl z-50 text-slate-900 font-sans">
+        <SheetHeader className="pb-4 border-b border-slate-100">
           <div className="flex items-center justify-between gap-2">
-            <SheetTitle className="text-xl font-extrabold font-mono text-slate-900">
+            <SheetTitle className="text-xl font-bold text-slate-900 font-sans tracking-tight">
               Audit Trail: {caseId}
             </SheetTitle>
             {isDnd && (
-              <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide bg-rose-100 text-rose-700 border border-rose-200">
+              <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-rose-100 text-rose-700 border border-rose-200 shrink-0 font-sans">
                 DND Protected
               </span>
             )}
           </div>
-          <SheetDescription className="text-xs font-medium text-slate-500">
+          <SheetDescription className="text-xs font-medium text-slate-500 font-sans mt-1">
             Complete step-by-step audit decision chain for {caseInfo?.customer_name || 'Customer'}.
           </SheetDescription>
         </SheetHeader>
 
         {loading ? (
-          <div className="py-16 text-center text-slate-400 flex flex-col items-center gap-3">
+          <div className="py-16 text-center text-slate-400 flex flex-col items-center gap-3 font-sans">
             <svg className="animate-spin h-6 w-6 text-slate-900" viewBox="0 0 24 24" fill="none">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path
@@ -84,18 +85,18 @@ export function CaseDetail({
             <span className="text-xs font-semibold">Fetching audit trail details...</span>
           </div>
         ) : (
-          <div className="py-6 space-y-6">
+          <div className="py-6 space-y-6 font-sans">
             {/* STEP 1: DETECTED */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-white text-xs font-bold">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-white text-xs font-bold shrink-0">
                   1
                 </span>
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">
                   Step 1: Detected (Payment Failure)
                 </h3>
               </div>
-              <div className="bg-white rounded-3xl p-5 border border-slate-200/70 shadow-xs grid grid-cols-2 gap-4 text-xs">
+              <div className="bg-slate-50 rounded-2xl p-4 md:p-5 border border-slate-100 grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">
                     Source Gateway
@@ -106,7 +107,7 @@ export function CaseDetail({
                   <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">
                     Raw Error Code
                   </span>
-                  <span className="font-mono font-semibold text-amber-600">
+                  <span className="font-semibold text-amber-700">
                     {caseInfo?.error_code || 'BAD_REQUEST_ERROR'}
                   </span>
                 </div>
@@ -114,7 +115,7 @@ export function CaseDetail({
                   <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">
                     Failure Class
                   </span>
-                  <span className="inline-block mt-1 px-3 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 capitalize">
+                  <span className="inline-block mt-1 px-3 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200/70 text-slate-800 capitalize">
                     {caseInfo?.failure_class?.replace('_', ' ')}
                   </span>
                 </div>
@@ -122,7 +123,7 @@ export function CaseDetail({
                   <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">
                     Amount
                   </span>
-                  <span className="font-extrabold text-slate-900 text-sm">
+                  <span className="font-bold text-slate-900 text-sm">
                     {formatCurrency(caseInfo?.amount, caseInfo?.currency)}
                   </span>
                 </div>
@@ -132,17 +133,17 @@ export function CaseDetail({
             {/* STEP 2: DIAGNOSED */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-white text-xs font-bold">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-purple-600 text-white text-xs font-bold shrink-0">
                   2
                 </span>
-                <h3 className="font-bold text-xs uppercase tracking-wider text-purple-600">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-purple-700">
                   Step 2: LLM Diagnosis
                 </h3>
               </div>
-              <div className="bg-purple-50/50 rounded-3xl p-5 border border-purple-200/60 space-y-3 text-xs">
+              <div className="bg-purple-50/70 rounded-2xl p-4 md:p-5 border border-purple-100 space-y-3 text-xs">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-purple-400 block text-[10px] font-bold uppercase tracking-wider">
+                    <span className="text-purple-500 block text-[10px] font-bold uppercase tracking-wider">
                       Root Cause
                     </span>
                     <span className="font-bold text-purple-950 text-sm">
@@ -152,10 +153,10 @@ export function CaseDetail({
                   {(diagnosis?.confidence_score !== undefined ||
                     diagnosis?.confidence !== undefined) && (
                     <div className="text-right">
-                      <span className="text-purple-400 block text-[10px] font-bold uppercase tracking-wider">
+                      <span className="text-purple-500 block text-[10px] font-bold uppercase tracking-wider">
                         Confidence
                       </span>
-                      <span className="font-extrabold text-purple-700">
+                      <span className="font-bold text-purple-700">
                         {Math.round(
                           (diagnosis.confidence_score ?? diagnosis.confidence ?? 0.85) * 100
                         )}
@@ -165,7 +166,7 @@ export function CaseDetail({
                   )}
                 </div>
                 <div>
-                  <span className="text-purple-400 block text-[10px] font-bold uppercase tracking-wider mb-1">
+                  <span className="text-purple-500 block text-[10px] font-bold uppercase tracking-wider mb-1">
                     LLM Suggested Action
                   </span>
                   <span className="px-3 py-1 rounded-full text-xs font-bold uppercase bg-purple-600 text-white inline-block">
@@ -173,10 +174,10 @@ export function CaseDetail({
                   </span>
                 </div>
                 <div>
-                  <span className="text-purple-400 block text-[10px] font-bold uppercase tracking-wider mb-1">
+                  <span className="text-purple-500 block text-[10px] font-bold uppercase tracking-wider mb-1">
                     Reasoning Summary
                   </span>
-                  <p className="text-slate-600 font-medium leading-relaxed bg-white/90 p-3 rounded-2xl border border-purple-100">
+                  <p className="text-slate-700 font-medium leading-relaxed bg-white p-3 rounded-xl border border-purple-100 shadow-2xs">
                     {diagnosis?.explanation ||
                       diagnosis?.reasoning_summary ||
                       'The failure was categorized based on merchant API status logs and customer payment profile.'}
@@ -188,30 +189,30 @@ export function CaseDetail({
             {/* STEP 3: GATED (PROMINENT POLICY GATE BANNER) */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-600 text-white text-xs font-bold">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-600 text-white text-xs font-bold shrink-0">
                   3
                 </span>
-                <h3 className="font-bold text-xs uppercase tracking-wider text-amber-700">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-amber-800">
                   Step 3: Deterministic Policy Gate (Proof Point)
                 </h3>
               </div>
               <div
-                className={`p-5 rounded-3xl border-2 shadow-xs transition-all ${
+                className={`p-4 md:p-5 rounded-2xl border transition-all ${
                   isAllowed
-                    ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950'
-                    : 'bg-rose-50/80 border-rose-300 text-rose-950'
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                    : 'bg-rose-50 border-rose-200 text-rose-950'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">{isAllowed ? '✓' : '🚫'}</span>
-                    <span className="font-extrabold text-base tracking-tight">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-lg shrink-0">{isAllowed ? '✓' : '🚫'}</span>
+                    <span className="font-bold text-sm md:text-base tracking-tight">
                       Policy Decision: {isAllowed ? 'ALLOWED' : 'BLOCKED / OVERRIDDEN'}
                     </span>
                   </div>
                   <span
-                    className={`px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase ${
-                      isAllowed ? 'bg-emerald-200 text-emerald-900' : 'bg-rose-200 text-rose-900'
+                    className={`inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tight break-all self-start sm:self-auto max-w-full ${
+                      isAllowed ? 'bg-emerald-200/90 text-emerald-900' : 'bg-rose-200/90 text-rose-900'
                     }`}
                   >
                     {policyDecision?.rule_triggered ||
@@ -219,11 +220,11 @@ export function CaseDetail({
                   </span>
                 </div>
 
-                <div className="mt-3 pt-3 border-t border-current/20 text-xs space-y-1">
+                <div className="mt-2.5 pt-2.5 border-t border-current/15 text-xs space-y-1">
                   <span className="font-bold uppercase tracking-wider text-[10px] opacity-80 block">
                     Gate Reason:
                   </span>
-                  <p className="font-semibold leading-relaxed bg-white/90 p-3.5 rounded-2xl border border-current/20 text-slate-800">
+                  <p className="font-semibold leading-relaxed bg-white p-3 rounded-xl border border-current/15 text-slate-800 shadow-2xs">
                     {gateReason}
                   </p>
                 </div>
@@ -233,20 +234,20 @@ export function CaseDetail({
             {/* STEP 4: ACTED */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold shrink-0">
                   4
                 </span>
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">
                   Step 4: Executed Intervention
                 </h3>
               </div>
-              <div className="bg-white rounded-3xl p-5 border border-slate-200/70 shadow-xs space-y-3 text-xs">
+              <div className="bg-slate-50 rounded-2xl p-4 md:p-5 border border-slate-100 space-y-3 text-xs">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">
                       Channel
                     </span>
-                    <span className="inline-block mt-1 px-3 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 capitalize font-mono">
+                    <span className="inline-block mt-1 px-3 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200/70 text-slate-800 capitalize">
                       {intervention?.channel ||
                         intervention?.action_type ||
                         policyDecision?.action ||
@@ -267,7 +268,7 @@ export function CaseDetail({
                     <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-1">
                       Drafted Message Content
                     </span>
-                    <p className="font-mono text-[11px] bg-slate-50 p-3 rounded-2xl border border-slate-200 text-slate-800 whitespace-pre-wrap">
+                    <p className="font-medium text-xs bg-white p-3 rounded-xl border border-slate-200 text-slate-800 whitespace-pre-wrap leading-relaxed">
                       {intervention.message_text || intervention.content}
                     </p>
                   </div>
@@ -281,7 +282,7 @@ export function CaseDetail({
                       href={intervention.payment_link_url || intervention.external_ref || '#'}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-blue-600 font-mono text-[11px] underline break-all hover:text-blue-800"
+                      className="text-blue-600 font-medium text-xs underline break-all hover:text-blue-800"
                     >
                       {intervention.payment_link_url || intervention.external_ref}
                     </a>
@@ -293,19 +294,19 @@ export function CaseDetail({
             {/* STEP 5: RESOLVED */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold shrink-0">
                   5
                 </span>
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-500">
                   Step 5: Final Outcome & Recovery
                 </h3>
               </div>
-              <div className="bg-emerald-50/40 rounded-3xl p-5 border border-emerald-200/60 grid grid-cols-2 gap-4 text-xs">
+              <div className="bg-emerald-50/60 rounded-2xl p-4 md:p-5 border border-emerald-100 grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">
                     Final Status
                   </span>
-                  <span className="font-extrabold text-slate-900 text-sm capitalize">
+                  <span className="font-bold text-slate-900 text-sm capitalize">
                     {outcome?.outcome || outcome?.status || caseInfo?.status || 'pending'}
                   </span>
                 </div>
@@ -313,7 +314,7 @@ export function CaseDetail({
                   <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider">
                     Amount Recovered
                   </span>
-                  <span className="font-extrabold text-emerald-600 text-sm">
+                  <span className="font-extrabold text-emerald-700 text-sm">
                     {formatCurrency(
                       outcome?.recovered_amount ?? outcome?.amount_recovered,
                       caseInfo?.currency

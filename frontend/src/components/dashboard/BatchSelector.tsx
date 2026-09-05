@@ -1,4 +1,11 @@
 import type { BatchItem } from '../../types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface BatchSelectorProps {
   batches: BatchItem[];
@@ -30,40 +37,51 @@ export function BatchSelector({
     }
   };
 
+  const getSelectedBatchLabel = (id: string) => {
+    const found = batches.find((b) => b.batch_id === id);
+    if (!found) return id || 'Select batch...';
+    const dateStr = found.created_at ? `(${formatDate(found.created_at)})` : '';
+    const casesStr = found.total_cases !== undefined ? `• ${found.total_cases} cases` : '';
+    return `${found.batch_id} ${dateStr} ${casesStr}`.trim();
+  };
+
   return (
     <div className="w-full bg-white/65 backdrop-blur-md rounded-3xl p-5 border border-white/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)] mb-6 transition-all">
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-1 min-w-[280px]">
-          <label
-            htmlFor="batch-select"
-            className="text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap"
-          >
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">
             Select Batch
           </label>
-          <div className="relative flex-1 max-w-md">
-            <select
-              id="batch-select"
+          <div className="flex-1 max-w-md">
+            <Select
               value={selectedBatchId}
-              onChange={(e) => onSelectBatch(e.target.value)}
+              onValueChange={(val) => onSelectBatch(val)}
               disabled={isRunning || batches.length === 0}
-              className="w-full appearance-none h-10 px-4 pr-10 bg-white/50 border border-slate-200/60 rounded-full text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/20 disabled:opacity-50 transition-all cursor-pointer"
             >
-              {batches.length === 0 ? (
-                <option value="">No batches found</option>
-              ) : (
-                batches.map((batch) => (
-                  <option key={batch.batch_id} value={batch.batch_id}>
-                    {batch.batch_id} {batch.created_at ? `(${formatDate(batch.created_at)})` : ''}{' '}
-                    {batch.total_cases !== undefined ? `• ${batch.total_cases} cases` : ''}
-                  </option>
-                ))
-              )}
-            </select>
-            <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-              </svg>
-            </div>
+              <SelectTrigger className="w-full h-10 px-4 bg-white/50 hover:bg-white border border-slate-200/60 rounded-full text-xs font-semibold text-slate-800 shadow-xs focus:outline-none focus:ring-2 focus:ring-slate-900/20">
+                <SelectValue placeholder="Select batch...">
+                  {getSelectedBatchLabel(selectedBatchId)}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-xl max-h-60 overflow-y-auto">
+                {batches.length === 0 ? (
+                  <SelectItem value="none" disabled>
+                    No batches found
+                  </SelectItem>
+                ) : (
+                  batches.map((batch) => (
+                    <SelectItem
+                      key={batch.batch_id}
+                      value={batch.batch_id}
+                      className="text-xs font-medium py-2 px-3 focus:bg-slate-100 cursor-pointer"
+                    >
+                      {batch.batch_id} {batch.created_at ? `(${formatDate(batch.created_at)})` : ''}{' '}
+                      {batch.total_cases !== undefined ? `• ${batch.total_cases} cases` : ''}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

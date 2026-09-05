@@ -51,7 +51,7 @@ export function Policy() {
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-4xl font-normal text-slate-900 tracking-tight">
             Policy Configuration
           </h1>
           <p className="text-sm font-medium text-slate-500 mt-1">

@@ -11,19 +11,24 @@ export function Nav() {
 
   return (
     <header className="w-full px-6 pt-6 pb-2">
-      <div className="w-full flex items-center justify-between gap-4 bg-white/65 backdrop-blur-md rounded-full px-6 py-3 border border-white/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-        {/* Brand / Logo Badge */}
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-sm">
-            R
+      <div className="w-full flex items-center justify-between gap-4 relative">
+        {/* Left: Brand / Logo */}
+        <div className="flex items-center gap-2.5">
+          <div className="h-9 w-9 rounded-full bg-slate-900 text-amber-300 flex items-center justify-center font-bold text-sm shadow-xs font-asar shrink-0">
+            ब
           </div>
-          <span className="font-bold tracking-tight text-slate-900 text-base">
-            Recover<span className="text-slate-400 font-normal">AI</span>
-          </span>
+          <div className="flex flex-col justify-center">
+            <span className="font-asar text-2xl font-bold tracking-tight text-slate-900 leading-none">
+              बरकत
+            </span>
+            <span className="text-[10px] font-medium text-slate-500 tracking-tight leading-tight mt-0.5 whitespace-nowrap">
+              Failed Payments · Revenue Recovery
+            </span>
+          </div>
         </div>
 
-        {/* Navigation Tabs (Match Reference Crextio Pill Navigation) */}
-        <nav className="flex items-center gap-1 bg-white/40 p-1 rounded-full border border-slate-200/40">
+        {/* Center: Page Navigation Pills Container */}
+        <nav className="flex items-center gap-1 bg-white/65 backdrop-blur-md p-1 rounded-full border border-white/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)] absolute left-1/2 -translate-x-1/2">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -41,14 +46,6 @@ export function Nav() {
             </NavLink>
           ))}
         </nav>
-
-        {/* Right Status Indicator */}
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Engine Online
-          </span>
-        </div>
       </div>
     </header>
   );

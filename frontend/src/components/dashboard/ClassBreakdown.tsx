@@ -83,6 +83,7 @@ export function ClassBreakdown({ summary, loading }: ClassBreakdownProps) {
                 tickLine={false}
               />
               <Tooltip
+                cursor={{ fill: 'transparent' }}
                 formatter={(value: number, name: string) => [
                   value,
                   name === 'totalCases' ? 'Total Cases' : 'Recovered Cases',

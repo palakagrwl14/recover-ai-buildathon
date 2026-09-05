@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { BatchItem, BatchSummary } from '../types';
 import { listBatches, getBatchSummary, runBatch } from '../lib/api';
 import BatchSelector from '../components/dashboard/BatchSelector';
@@ -6,8 +7,11 @@ import StatRow from '../components/dashboard/StatRow';
 import ClassBreakdown from '../components/dashboard/ClassBreakdown';
 
 export function Dashboard() {
+  const [searchParams] = useSearchParams();
+  const urlBatchId = searchParams.get('batch') || searchParams.get('batch_id');
+
   const [batches, setBatches] = useState<BatchItem[]>([]);
-  const [selectedBatchId, setSelectedBatchId] = useState<string>('');
+  const [selectedBatchId, setSelectedBatchId] = useState<string>(urlBatchId || '');
   const [summary, setSummary] = useState<BatchSummary | null>(null);
 
   const [loadingBatches, setLoadingBatches] = useState<boolean>(true);
@@ -24,21 +28,22 @@ export function Dashboard() {
         const batchList = Array.isArray(data) ? data : [];
         setBatches(batchList);
 
-        if (selectBatchId) {
-          setSelectedBatchId(selectBatchId);
+        const targetBatch = selectBatchId || urlBatchId;
+        if (targetBatch) {
+          setSelectedBatchId(targetBatch);
         } else if (batchList.length > 0 && !selectedBatchId) {
           setSelectedBatchId(batchList[0].batch_id);
         }
       } catch (err: any) {
         console.error('Failed to fetch batches:', err);
         setError(
-          err.message || 'Unable to connect to RecoverAI backend at http://localhost:8000'
+          err.message || 'Unable to connect to बरकत backend at http://localhost:8000'
         );
       } finally {
         setLoadingBatches(false);
       }
     },
-    [selectedBatchId]
+    [selectedBatchId, urlBatchId]
   );
 
   const fetchSummary = useCallback(async (batchId: string) => {
@@ -93,13 +98,13 @@ export function Dashboard() {
 
   return (
     <div className="w-full px-6 py-8">
-      {/* Dashboard Heading (Match Reference Crextio Header) */}
+      {/* Dashboard Heading */}
       <div className="mb-8">
-        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
-          Payment Recovery Dashboard
+        <h1 className="text-4xl font-normal text-slate-900 tracking-tight">
+          Welcome back!
         </h1>
-        <p className="text-sm font-medium text-slate-500 mt-1.5">
-          Real-time analytics and autonomous payment failure recovery metrics.
+        <p className="text-sm font-medium text-slate-500 mt-1">
+          Here is your payment recovery overview.
         </p>
       </div>
 

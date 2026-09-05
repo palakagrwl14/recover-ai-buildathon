@@ -118,4 +118,9 @@ export interface BatchItem {
   batch_id: string;
   created_at?: string;
   total_cases?: number;
+  amount_recovered?: number;
+  recovery_rate_pct?: number;
+  recovery_rate_percent?: number;
+  policy_version?: string;
+  [key: string]: any;
 }

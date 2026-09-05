@@ -4,6 +4,13 @@ import type { Case, CaseDetailResponse, BatchItem } from '../types';
 import { listCases, getCase, listBatches } from '../lib/api';
 import AuditTable from '../components/cases/AuditTable';
 import CaseDetail from '../components/cases/CaseDetail';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const FAILURE_CLASS_OPTIONS = [
   { value: 'all', label: 'All Failure Classes' },
@@ -102,10 +109,26 @@ export function Cases() {
     }
   };
 
+  const getBatchLabel = (id: string) => {
+    if (id === 'all' || !id) return 'All Batches';
+    const found = batches.find((b) => b.batch_id === id);
+    return found ? `${found.batch_id} (${found.total_cases ?? 0} cases)` : id;
+  };
+
+  const getFailureClassLabel = (val: string) => {
+    const found = FAILURE_CLASS_OPTIONS.find((o) => o.value === val);
+    return found ? found.label : 'All Failure Classes';
+  };
+
+  const getStatusLabel = (val: string) => {
+    const found = STATUS_OPTIONS.find((o) => o.value === val);
+    return found ? found.label : 'All Statuses';
+  };
+
   return (
     <div className="w-full px-6 py-8 space-y-6">
       <div>
-        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-4xl font-normal text-slate-900 tracking-tight">
           Payment Recovery Cases
         </h1>
         <p className="text-sm font-medium text-slate-500 mt-1.5">
@@ -132,90 +155,89 @@ export function Cases() {
       <div className="bg-white/65 backdrop-blur-md rounded-3xl p-5 border border-white/70 shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-wrap items-center gap-4">
         {/* Batch Filter */}
         <div className="flex flex-col gap-1.5 flex-1 min-w-[200px]">
-          <label
-            htmlFor="filter-batch"
-            className="text-[11px] font-bold text-slate-400 uppercase tracking-wider"
-          >
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
             Batch
           </label>
-          <div className="relative">
-            <select
-              id="filter-batch"
-              value={batchIdParam}
-              onChange={(e) => updateFilter('batchId', e.target.value)}
-              className="w-full appearance-none h-10 px-4 pr-10 bg-white/50 border border-slate-200/60 rounded-full text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/20 cursor-pointer"
-            >
-              <option value="all">All Batches</option>
+          <Select
+            value={batchIdParam}
+            onValueChange={(val) => updateFilter('batchId', val)}
+          >
+            <SelectTrigger className="w-full h-10 px-4 bg-white/50 hover:bg-white border border-slate-200/60 rounded-full text-xs font-semibold text-slate-800 shadow-xs focus:outline-none focus:ring-2 focus:ring-slate-900/20">
+              <SelectValue placeholder="All Batches">
+                {getBatchLabel(batchIdParam)}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-xl max-h-60 overflow-y-auto">
+              <SelectItem value="all" className="text-xs font-medium py-2 px-3 focus:bg-slate-100 cursor-pointer">
+                All Batches
+              </SelectItem>
               {batches.map((b) => (
-                <option key={b.batch_id} value={b.batch_id}>
+                <SelectItem
+                  key={b.batch_id}
+                  value={b.batch_id}
+                  className="text-xs font-medium py-2 px-3 focus:bg-slate-100 cursor-pointer"
+                >
                   {b.batch_id} ({b.total_cases ?? 0} cases)
-                </option>
+                </SelectItem>
               ))}
-            </select>
-            <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-              </svg>
-            </div>
-          </div>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Failure Class Filter */}
         <div className="flex flex-col gap-1.5 flex-1 min-w-[200px]">
-          <label
-            htmlFor="filter-failure-class"
-            className="text-[11px] font-bold text-slate-400 uppercase tracking-wider"
-          >
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
             Failure Class
           </label>
-          <div className="relative">
-            <select
-              id="filter-failure-class"
-              value={failureClassParam}
-              onChange={(e) => updateFilter('failureClass', e.target.value)}
-              className="w-full appearance-none h-10 px-4 pr-10 bg-white/50 border border-slate-200/60 rounded-full text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/20 cursor-pointer"
-            >
+          <Select
+            value={failureClassParam}
+            onValueChange={(val) => updateFilter('failureClass', val)}
+          >
+            <SelectTrigger className="w-full h-10 px-4 bg-white/50 hover:bg-white border border-slate-200/60 rounded-full text-xs font-semibold text-slate-800 shadow-xs focus:outline-none focus:ring-2 focus:ring-slate-900/20">
+              <SelectValue placeholder="All Failure Classes">
+                {getFailureClassLabel(failureClassParam)}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-xl max-h-60 overflow-y-auto">
               {FAILURE_CLASS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
+                <SelectItem
+                  key={opt.value}
+                  value={opt.value}
+                  className="text-xs font-medium py-2 px-3 focus:bg-slate-100 cursor-pointer"
+                >
                   {opt.label}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-            <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-              </svg>
-            </div>
-          </div>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Status Filter */}
         <div className="flex flex-col gap-1.5 flex-1 min-w-[200px]">
-          <label
-            htmlFor="filter-status"
-            className="text-[11px] font-bold text-slate-400 uppercase tracking-wider"
-          >
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
             Status
           </label>
-          <div className="relative">
-            <select
-              id="filter-status"
-              value={statusParam}
-              onChange={(e) => updateFilter('status', e.target.value)}
-              className="w-full appearance-none h-10 px-4 pr-10 bg-white/50 border border-slate-200/60 rounded-full text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/20 cursor-pointer"
-            >
+          <Select
+            value={statusParam}
+            onValueChange={(val) => updateFilter('status', val)}
+          >
+            <SelectTrigger className="w-full h-10 px-4 bg-white/50 hover:bg-white border border-slate-200/60 rounded-full text-xs font-semibold text-slate-800 shadow-xs focus:outline-none focus:ring-2 focus:ring-slate-900/20">
+              <SelectValue placeholder="All Statuses">
+                {getStatusLabel(statusParam)}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-xl max-h-60 overflow-y-auto">
               {STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
+                <SelectItem
+                  key={opt.value}
+                  value={opt.value}
+                  className="text-xs font-medium py-2 px-3 focus:bg-slate-100 cursor-pointer"
+                >
                   {opt.label}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-            <div className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-              </svg>
-            </div>
-          </div>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
