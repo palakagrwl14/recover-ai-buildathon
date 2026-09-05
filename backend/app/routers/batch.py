@@ -327,30 +327,32 @@ def update_policy_config(
 
     updated_keys = {}
     for key, value in payload.items():
-        if value is None:
+        if value is None or key == "cooldown_hours" or isinstance(value, dict):
             continue
         val_str = str(value)
         
         cfg = db.query(PolicyConfig).filter(PolicyConfig.key == key).first()
         old_val = cfg.value if cfg else None
         
-        if cfg:
-            cfg.value = val_str
-            cfg.updated_at = datetime.utcnow()
-        else:
-            cfg = PolicyConfig(key=key, value=val_str, description=f"Policy setting for {key}")
-            db.add(cfg)
+        # Only update and log if value actually changed or is brand new
+        if old_val != val_str:
+            if cfg:
+                cfg.value = val_str
+                cfg.updated_at = datetime.utcnow()
+            else:
+                cfg = PolicyConfig(key=key, value=val_str, description=f"Policy setting for {key}")
+                db.add(cfg)
 
-        # Record Audit Log
-        log = PolicyChangeLog(
-            config_key=key,
-            old_value=old_val,
-            new_value=val_str,
-            changed_by="admin_api",
-            changed_at=datetime.utcnow()
-        )
-        db.add(log)
-        updated_keys[key] = val_str
+            # Record Audit Log
+            log = PolicyChangeLog(
+                config_key=key,
+                old_value=old_val,
+                new_value=val_str,
+                changed_by="admin_api",
+                changed_at=datetime.utcnow()
+            )
+            db.add(log)
+            updated_keys[key] = val_str
 
     db.commit()
     return {"message": "Policy configuration updated successfully.", "updated": updated_keys}

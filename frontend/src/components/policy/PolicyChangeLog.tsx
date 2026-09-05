@@ -36,6 +36,13 @@ const KEY_LABELS: Record<string, string> = {
 };
 
 export function PolicyChangeLog({ logs, loading }: PolicyChangeLogProps) {
+  // Filter out raw JSON dict objects or duplicate nested entries
+  const displayLogs = (logs || []).filter((log) => {
+    if (!log.config_key || log.config_key === 'cooldown_hours') return false;
+    if (log.new_value && (log.new_value.startsWith('{') || log.new_value.startsWith("'"))) return false;
+    return true;
+  });
+
   const formatKeyName = (key: string) => {
     return KEY_LABELS[key] || key.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   };
@@ -74,7 +81,7 @@ export function PolicyChangeLog({ logs, loading }: PolicyChangeLogProps) {
           </div>
         </div>
         <div className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-          {logs.length} {logs.length === 1 ? 'Entry' : 'Entries'}
+          {displayLogs.length} {displayLogs.length === 1 ? 'Entry' : 'Entries'}
         </div>
       </div>
 
@@ -83,7 +90,7 @@ export function PolicyChangeLog({ logs, loading }: PolicyChangeLogProps) {
           <div className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs font-medium text-gray-400">Loading policy history logs...</p>
         </div>
-      ) : logs.length === 0 ? (
+      ) : displayLogs.length === 0 ? (
         <div className="py-12 text-center space-y-2 bg-white/40 rounded-2xl border border-dashed border-gray-200">
           <Clock className="w-8 h-8 text-gray-300 mx-auto" />
           <p className="text-sm font-semibold text-gray-600">No policy changes recorded yet</p>
@@ -111,7 +118,7 @@ export function PolicyChangeLog({ logs, loading }: PolicyChangeLogProps) {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100">
-              {logs.map((log, idx) => (
+              {displayLogs.map((log, idx) => (
                 <TableRow key={log.id || idx} className="hover:bg-slate-50/50 transition-colors">
                   <TableCell className="py-3.5">
                     <div className="font-semibold text-gray-900 text-sm">

@@ -45,8 +45,16 @@ export function PolicyForm({ config, onSaveSuccess }: PolicyFormProps) {
         setHighValueThreshold(String(config.high_value_threshold));
       }
 
-      // Handle nested or flat cooldown keys
-      const newCooldowns = { ...cooldowns };
+      // Handle nested or flat cooldown keys starting from clean defaults
+      const defaultCooldowns = {
+        insufficient_funds: '24',
+        bank_declined: '12',
+        network_error: '1',
+        card_expired: '72',
+        other: '24',
+      };
+      const newCooldowns = { ...defaultCooldowns };
+
       if (typeof config.cooldown_hours === 'object' && config.cooldown_hours !== null) {
         if (config.cooldown_hours.insufficient_funds !== undefined)
           newCooldowns.insufficient_funds = String(config.cooldown_hours.insufficient_funds);
@@ -129,13 +137,6 @@ export function PolicyForm({ config, onSaveSuccess }: PolicyFormProps) {
         cooldown_network_error: Number(cooldowns.network_error),
         cooldown_card_expired: Number(cooldowns.card_expired),
         cooldown_other: Number(cooldowns.other),
-        cooldown_hours: {
-          insufficient_funds: Number(cooldowns.insufficient_funds),
-          bank_declined: Number(cooldowns.bank_declined),
-          network_error: Number(cooldowns.network_error),
-          card_expired: Number(cooldowns.card_expired),
-          other: Number(cooldowns.other),
-        },
       };
 
       await updatePolicy(payload);
