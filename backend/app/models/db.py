@@ -52,6 +52,7 @@ class DiagnosisRecord(Base):
     explanation = Column(Text, nullable=False)
     is_fallback = Column(Boolean, default=False)
     raw_llm_response = Column(Text, nullable=True)
+    model_name = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     case = relationship("Case", back_populates="diagnosis")

@@ -130,6 +130,7 @@ def process_case(
         explanation=diag_res["explanation"],
         is_fallback=diag_res["is_fallback"],
         raw_llm_response=diag_res.get("raw_llm_response", ""),
+        model_name=diag_res.get("model_name", "rule-engine-v1"),
     )
     db.add(diag_obj)
 

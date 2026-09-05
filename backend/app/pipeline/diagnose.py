@@ -58,6 +58,7 @@ def _get_rule_fallback_diagnosis(case_data: dict) -> dict:
         "explanation": explanation,
         "is_fallback": True,
         "raw_llm_response": "N/A (Rule-based Fallback)",
+        "model_name": "rule-engine-v1",
     }
 
 
@@ -75,6 +76,7 @@ def diagnose_case(case_data: dict) -> dict:
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=anthropic_key)
+        model_used = "claude-3-5-sonnet-20241022"
         
         prompt = f"""
 You are a payment failure diagnosis AI. Analyze the following failed payment case and return a strict JSON object.
@@ -94,7 +96,7 @@ Return JSON with exact keys:
 - "explanation": 2-3 sentence explanation of the failure reason and recovery outlook
 """
         response = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
+            model=model_used,
             max_tokens=300,
             messages=[{"role": "user", "content": prompt}],
         )
@@ -108,6 +110,7 @@ Return JSON with exact keys:
             "explanation": data.get("explanation", "Analyzed via Claude AI."),
             "is_fallback": False,
             "raw_llm_response": content_text,
+            "model_name": model_used,
         }
     except Exception as e:
         # On any API error, timeout, or parsing error, fallback gracefully

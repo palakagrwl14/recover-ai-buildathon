@@ -36,10 +36,14 @@ class DiagnosisDetail(BaseModel):
     confidence_score: float
     explanation: str
     is_fallback: bool
+    model_name: Optional[str] = None
     created_at: datetime
 
     class Config:
         from_attributes = True
+
+
+DiagnosisOut = DiagnosisDetail
 
 
 class PolicyDecisionDetail(BaseModel):
