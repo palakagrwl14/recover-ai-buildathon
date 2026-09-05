@@ -47,6 +47,7 @@ class PolicyDecisionDetail(BaseModel):
     reason: str
     rule_triggered: str
     is_override: bool
+    allowed: Optional[bool] = None
     evaluated_at: datetime
 
     class Config:
@@ -88,5 +89,9 @@ class BatchSummaryResponse(BaseModel):
     total_revenue_at_risk: float
     total_revenue_recovered: float
     recovery_rate_percent: float
+    cases_blocked: Optional[int] = 0
+    cases_escalated: Optional[int] = 0
+    cases_recovered: Optional[int] = 0
+    cases_pending: Optional[int] = 0
     action_breakdown: Dict[str, int]
     failure_breakdown: Dict[str, int]

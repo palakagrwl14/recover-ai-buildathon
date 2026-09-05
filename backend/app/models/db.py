@@ -30,6 +30,7 @@ class Case(Base):
     error_description = Column(Text, nullable=True)
     failure_class = Column(String, index=True)  # insufficient_funds, bank_declined, network_error, risk_hold, card_expired, other
     attempt_count = Column(Integer, default=1)
+    batch_id = Column(String, index=True, nullable=True)
     status = Column(String, default="pending", index=True)  # pending, in_progress, recovered, abandoned, review_required
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

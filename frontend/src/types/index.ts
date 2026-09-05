@@ -113,3 +113,9 @@ export interface CaseDetailResponse {
   interventions: Intervention[];
   outcome?: Outcome | null;
 }
+
+export interface BatchItem {
+  batch_id: string;
+  created_at?: string;
+  total_cases?: number;
+}

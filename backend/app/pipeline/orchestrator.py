@@ -41,7 +41,8 @@ def _simulate_recovery(action: str, failure_class: str) -> bool:
 def process_case(
     case_data: dict,
     db: Session,
-    config_overrides: Optional[dict] = None
+    config_overrides: Optional[dict] = None,
+    batch_id: Optional[str] = None
 ) -> dict:
     """
     Processes a single payment failure case through the end-to-end recovery pipeline:
@@ -113,6 +114,7 @@ def process_case(
         error_description=case_data.get("error_description", ""),
         failure_class=failure_class,
         attempt_count=int(case_data.get("attempt_count", 1)),
+        batch_id=batch_id,
         status=case_status,
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow(),
@@ -187,6 +189,7 @@ def process_batch(
     """
     Processes a full batch of cases, persisting DB records for each and returning aggregate analytics.
     """
+    batch_id = f"batch_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
     processed_results = []
     total_revenue_at_risk = 0.0
     total_revenue_recovered = 0.0
@@ -202,7 +205,7 @@ def process_batch(
     }
 
     for case_data in cases_list:
-        res = process_case(case_data, db, config_overrides)
+        res = process_case(case_data, db, config_overrides, batch_id=batch_id)
         processed_results.append(res)
 
         total_revenue_at_risk += res["amount"]
@@ -222,7 +225,7 @@ def process_batch(
     recovery_rate = (total_revenue_recovered / total_revenue_at_risk * 100) if total_revenue_at_risk > 0 else 0.0
 
     return {
-        "batch_id": f"batch_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}",
+        "batch_id": batch_id,
         "total_cases": total_cases,
         "total_revenue_at_risk": total_revenue_at_risk,
         "total_revenue_recovered": total_revenue_recovered,

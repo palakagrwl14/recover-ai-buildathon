@@ -4,6 +4,7 @@ import type {
   BatchSummary,
   PolicyConfig,
   ListCasesParams,
+  BatchItem,
 } from '../types';
 
 const BASE_URL = 'http://localhost:8000';
@@ -57,12 +58,12 @@ export async function getBatchSummary(batchId?: string): Promise<BatchSummary> {
 /**
  * Lists all execution batches.
  */
-export async function listBatches(): Promise<any> {
+export async function listBatches(): Promise<BatchItem[]> {
   try {
-    return await fetchJson<any>('/api/batches');
+    return await fetchJson<BatchItem[]>('/api/batches');
   } catch {
     // Fallback if backend uses /api/batch/list
-    return await fetchJson<any>('/api/batch/list');
+    return await fetchJson<BatchItem[]>('/api/batch/list');
   }
 }
 
